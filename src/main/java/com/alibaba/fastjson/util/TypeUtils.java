@@ -50,6 +50,8 @@ import java.math.BigInteger;
 import java.security.AccessControlException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -2982,6 +2984,11 @@ public class TypeUtils{
                 }
                 constructor = item;
             }
+
+            if (constructor == null) {
+                return null;
+            }
+
             List parameters = (List) kotlin_kfunction_getParameters.invoke(constructor);
             String[] names = new String[parameters.size()];
             for(int i = 0; i < parameters.size(); i++){
@@ -3228,5 +3235,18 @@ public class TypeUtils{
             }
         }
         return class_JacksonCreator != null && method.isAnnotationPresent(class_JacksonCreator);
+    }
+
+    public static LocalDateTime castToLocalDateTime(Object value, String format) {
+        if (value == null) {
+            return null;
+        }
+
+        if (format == null) {
+            format = "yyyy-MM-dd HH:mm:ss";
+        }
+
+        DateTimeFormatter df = DateTimeFormatter.ofPattern(format);
+        return LocalDateTime.parse(value.toString(), df);
     }
 }
